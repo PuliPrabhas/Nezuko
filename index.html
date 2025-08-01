@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>For Nezuko</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&family=Quicksand:wght@300;500&display=swap" rel="stylesheet" />
+<style>
+  html, body {height: 100%; margin: 0; padding: 0; font-family: 'Quicksand', sans-serif; background: linear-gradient(-45deg,#fdeff6,#f3e5f5,#ffe4ec,#fbe9f7); background-size: 400% 400%; animation: gradientBG 28s ease-in-out infinite; color: #2d133b; overflow-x: hidden; scroll-behavior: smooth;}
+  @keyframes gradientBG {0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;}}
+  #petal-canvas {position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; transition: transform .8s cubic-bezier(.5,2,.1,1), filter 0.7s;}
+  #overlay {position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.98); backdrop-filter: blur(26px); -webkit-backdrop-filter: blur(26px); padding: 3rem 4vw 2.5rem 4vw; border-radius: 30px; box-shadow: 0 16px 60px rgba(0,0,0,0.10); text-align: center; z-index: 2; opacity: 1; min-width: 240px; max-width: 98vw; animation: fadeIn .92s; transition: opacity .8s, visibility .6s, transform .7s cubic-bezier(.5,2,.1,1); display: flex; flex-direction: column; align-items: center;}
+  @keyframes fadeIn {from {opacity: 0;} to {opacity: 1;}}
+  #overlay h1 {font-family: 'Dancing Script', cursive; font-size: 3rem; color: #ad1457; margin-bottom: 1rem; font-weight: 500; line-height: 1.1;}
+  #overlay p {font-size: 1.19rem; line-height: 2; color: #4a148c; min-height: 85px; margin-bottom: 0; white-space: pre-line;}
+  #enterBtn {margin-top: 2.2rem; padding: 1rem 3rem; background: linear-gradient(90deg,#c2185b 60%,#ad1457 100%); color: #fff; border: none; border-radius: 24px; cursor: pointer; font-size: 1.08rem; font-family: 'Quicksand',sans-serif; font-weight: 500; box-shadow: 0 3px 12px rgba(180,60,110,0.14); transition: transform .16s; outline: none;}
+  #enterBtn:hover {transform: scale(1.08); background: linear-gradient(90deg,#ad1457 35%,#c2185b 100%);}
+  .arrow-down {margin: 2.4rem auto 0 auto; animation: arrowFade 1.4s infinite alternate; font-size: 2.2rem; color: #ad1457; opacity: 0.46;}
+  @keyframes arrowFade {from {transform: translateY(0);} to {transform: translateY(14px); opacity: 1;}}
+  #navBar {position: fixed; top: 16px; right: 18px; z-index: 9; display: none; background: rgba(255, 255, 255, 0.92); box-shadow: 0 2px 22px #f8bbd076; border-radius: 20px; padding: 8px 22px;}
+  #navBar button {margin: 0 7px; border: none; background: transparent; color: #d81b60; font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 1.09rem; cursor: pointer; opacity: 0.9; padding: 4px 2px;}
+  #navBar button:hover {text-decoration: underline; color: #ad1457;}
+  .main-section {min-height: 85vh; padding: 66px 0 32px 0; display: flex; flex-direction: column; align-items: center; opacity: 0; transform: scale(0.95) translateY(60px); transition: opacity 0.89s cubic-bezier(0.5, 2, 0.1, 1), transform 0.88s cubic-bezier(0.5, 2, 0.1, 1); will-change: opacity, transform;}
+  .main-section.visible {opacity: 1; transform: scale(1) translateY(0);}
+  .glass-card {background: rgba(255,255,255,0.81); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); max-width: 750px; margin: 0 8vw 24px 8vw; border-radius: 26px; box-shadow: 0 6px 28px rgba(160,30,85,0.13); padding: 2.35rem 2vw 2.35rem 4vw; color: #322054; position: relative; font-size: 1.16rem; transition: box-shadow 0.73s cubic-bezier(0.5, 2, 0.1, 1);}
+  .glass-card h2 {font-family: 'Dancing Script', cursive; font-size: 2.1rem; color: #ad1457; margin-bottom: 0.8em; font-weight: 500; letter-spacing: 0.012em;}
+  .glass-card p {font-size: 1.14rem; line-height: 2.09; color: #68377c; margin-bottom: 1em; letter-spacing: 0.0005em;}
+  .section-nav-buttons {display: flex; justify-content: center; gap: 32px; margin-top: 34px;}
+  .section-nav-buttons button {padding: 0.68rem 2.1rem; background: #ad1457; border: none; border-radius: 20px; color: white; font-size: 1.08rem; cursor: pointer; box-shadow: 0 4px 16px rgba(194,24,91,0.27); transition: background 0.24s ease;}
+  .section-nav-buttons button:hover {background: #c2185b;}
+  .thought-bubble {display: inline-block; cursor: pointer; background: #f8bbd0cc; color: #8e236b; border-radius: 60px 60px 60px 0px / 80px 80px 80px 0px; padding: 8px 18px 9px 18px; margin-top: 12px; font-size: 1.08rem; font-family: 'Quicksand', sans-serif; font-weight: 500; margin-left: 0; margin-bottom: 0.5em; box-shadow: 0 3px 12px #f8bbd077; transition: background 0.19s, color 0.14s; position: relative;}
+  .thought-bubble:hover {background: #f48fb1ee; color: #ad1457;}
+  .bubble-content {display: none; margin-top: 0.5em; color: #5a2668; padding: 0.6em 0;}
+  .thought-bubble.revealed .bubble-content {display: block; animation: fadeInUp2 0.8s;}
+  @keyframes fadeInUp2 {from {opacity: 0.14; transform: translateY(18px);} to {opacity: 1; transform: translateY(0);}}
+  @media (max-width: 700px) {
+    #overlay { padding: 1.8rem 2vw 1.5rem 2vw; }
+    .main-section { padding: 48px 0 24px 0; }
+    .glass-card { padding: 1.5rem 2vw; }
+    #navBar { padding: 4px 10px; }
+    .section-nav-buttons { gap: 16px; flex-direction: column; align-items:stretch;}
+    .section-nav-buttons button { width: 100%; margin-bottom: 8px; }
+  }
+</style>
+</head>
+<body>
+<canvas id="petal-canvas"></canvas>
+
+<div id="overlay">
+  <h1>Dear Nezuko,</h1>
+  <p id="message"></p>
+  <button id="enterBtn">Enter</button>
+  <div class="arrow-down">↓</div>
+</div>
+
+<div id="navBar"></div>
+
+<section class="main-section" id="main1" data-title="My Side">
+  <div class="glass-card">
+    <h2>My Side of the Story</h2>
+    <p>Those were the early days of my second year in B.Tech. I was always looking for a friend who matched my vibe…</p>
+    <p>Then you, Nezuko—calm, thoughtful, in pink—walked in, and everything changed.</p>
+    <div class="thought-bubble">Click for a secret thought
+      <div class="bubble-content">I was mesmerized—your intro in class was the moment I decided you'd be the best friend I could ever wish for.</div>
+    </div>
+    <div class="section-nav-buttons">
+      <button onclick="goBack()">Back</button>
+      <button onclick="goNext()">Next</button>
+    </div>
+  </div>
+</section>
+
+<section class="main-section" id="main2" data-title="Admiration">
+  <div class="glass-card">
+    <h2>Your Calm Strength</h2>
+    <p>The way you carry yourself, so serene and steady, inspires everyone around you—including me. When things get busy, your presence alone makes the air feel lighter. I deeply respect how you never rush but always move forward.</p>
+    <div class="thought-bubble">Click for my reflection
+      <div class="bubble-content">Your calm is not weakness, it's your superpower! In chaos, you remind me to breathe and think clearly.</div>
+    </div>
+    <div class="section-nav-buttons">
+      <button onclick="goBack()">Back</button>
+      <button onclick="goNext()">Next</button>
+    </div>
+  </div>
+</section>
+
+<section class="main-section" id="main3" data-title="Thoughtfulness">
+  <div class="glass-card">
+    <h2>Your Thoughtful Mind</h2>
+    <p>You think deeply before you speak; your words have weight and meaning. That's rare, and I treasure it every time you share your perspective with me.</p>
+    <div class="thought-bubble">Click to see my gratitude
+      <div class="bubble-content">You've shared little advice that quietly changed my whole semester. Thank you for caring with both your mind and heart.</div>
+    </div>
+    <div class="section-nav-buttons">
+      <button onclick="goBack()">Back</button>
+      <button onclick="goNext()">Next</button>
+    </div>
+  </div>
+</section>
+
+<section class="main-section" id="main4" data-title="Journey">
+  <div class="glass-card">
+    <h2>Where Friendship Leads</h2>
+    <p>I built this for you—not to impress, but to express. The journey is ongoing, and every scroll, every click, is a piece of my appreciation for the friendship I hope we keep growing.</p>
+    <div class="thought-bubble">A hope for the future
+      <div class="bubble-content">May each new story we share become another section in this adventure—unique and ours alone.</div>
+    </div>
+    <div class="section-nav-buttons">
+      <button onclick="goBack()">Back</button>
+    </div>
+  </div>
+</section>
+
+<script>
+// Variables
+const canvas = document.getElementById('petal-canvas');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const enterBtn = document.getElementById('enterBtn');
+const message = document.getElementById('message');
+const navBar = document.getElementById('navBar');
+const sections = [...document.querySelectorAll('.main-section')];
+let currentSectionIndex = 0;
+let dpr = 1;
+
+// Canvas setup
+function resizeCanvas() { 
+  dpr = window.devicePixelRatio || 1; 
+  canvas.width = window.innerWidth*dpr; 
+  canvas.height = window.innerHeight*dpr; 
+  canvas.style.width = window.innerWidth+'px'; 
+  canvas.style.height = window.innerHeight+'px'; 
+  ctx.setTransform(1,0,0,1,0,0); 
+  ctx.scale(dpr,dpr);
+}
+resizeCanvas(); 
+window.addEventListener('resize',resizeCanvas);
+
+// Petals
+const pinks = ['#e573b7','#f8b9d4','#ffcfe1','#f06292','#f6a7cc','#ffedf4','#ffb6d5','#ef60a3'];
+let petals = [];
+function resetPetals() {
+  petals = [];
+  let petalCount = Math.max(100, Math.floor(window.innerWidth / 10));
+  for(let i=0; i < petalCount; i++){
+    petals.push({
+      x: Math.random()*window.innerWidth,
+      y: Math.random()*window.innerHeight,
+      vx: (Math.random()-0.5)*0.43,
+      vy: Math.random()*0.37+0.20,
+      r: Math.random()*11+7,
+      c: pinks[Math.floor(Math.random()*pinks.length)],
+      o: Math.random()*0.5+0.36,
+      theta: Math.random()*Math.PI,
+      rot: (Math.random()-0.5)*0.01+0.003
+    });
+  }
+}
+resetPetals();
+window.addEventListener('resize',resetPetals);
+
+function drawPetals() {
+  ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+  for(const p of petals){
+    ctx.save(); 
+    ctx.globalAlpha = p.o; 
+    ctx.translate(p.x,p.y); 
+    ctx.rotate(p.theta);
+    ctx.beginPath(); 
+    ctx.ellipse(0,0,p.r,p.r*0.81,Math.PI/5,0,2*Math.PI);
+    ctx.fillStyle = p.c; 
+    ctx.shadowColor = '#c2185b55'; 
+    ctx.shadowBlur = 11;
+    ctx.fill(); 
+    ctx.restore(); 
+    p.x += p.vx; 
+    p.y += p.vy; 
+    p.theta += p.rot;
+    if(p.y > window.innerHeight + 34) p.y = -16, p.x = Math.random()*window.innerWidth;
+    if(p.x > window.innerWidth + 15 || p.x < -15) p.x = Math.random()*window.innerWidth;
+  }
+  requestAnimationFrame(drawPetals);
+}
+drawPetals();
+
+// Zoom effect
+function zoomParticles() {
+  canvas.style.transition = 'transform 0.8s cubic-bezier(0.5, 2, 0.1, 1), filter 0.7s';
+  canvas.style.transform = 'scale(1.17)';
+  canvas.style.filter = 'blur(1.5px) brightness(1.05)';
+  setTimeout(() => {
+    canvas.style.transform = 'scale(1)';
+    canvas.style.filter = 'blur(0px) brightness(1)';
+  }, 720);
+}
+
+// Text typing
+const text = `This isn't just a website.
+It's a world built quietly...
+for you, Nezuko.
+
+Scroll, tap, or swipe down to begin.`;
+
+function typeText(txt, el, delay=31){ 
+  el.textContent=''; 
+  let i=0; 
+  (function loop(){
+    if(i < txt.length){ 
+      el.textContent += txt[i++]; 
+      setTimeout(loop, delay);
+    }
+  })();
+}
+
+// Show specific section
+function showSection(index) {
+  sections.forEach((section, i) => {
+    if (i === index) {
+      section.classList.add('visible');
+    } else {
+      section.classList.remove('visible');
+    }
+  });
+  currentSectionIndex = index;
+  zoomParticles();
+}
+
+// Navigation functions
+function goNext() {
+  if (currentSectionIndex < sections.length - 1) {
+    const nextIndex = currentSectionIndex + 1;
+    showSection(nextIndex);
+    setTimeout(() => {
+      window.scrollTo({ 
+        top: sections[nextIndex].offsetTop - 18, 
+        behavior: 'smooth' 
+      });
+    }, 50);
+  }
+}
+
+function goBack() {
+  if (currentSectionIndex > 0) {
+    const prevIndex = currentSectionIndex - 1;
+    showSection(prevIndex);
+    setTimeout(() => {
+      window.scrollTo({ 
+        top: sections[prevIndex].offsetTop - 18, 
+        behavior: 'smooth' 
+      });
+    }, 50);
+  } else {
+    // Back to overlay
+    overlay.style.display = 'flex';
+    overlay.style.opacity = '1';
+    overlay.style.transform = 'translate(-50%, -50%) scale(1)';
+    document.body.style.overflow = 'hidden';
+    navBar.style.display = 'none';
+    sections.forEach(s => s.classList.remove('visible'));
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+
+// Initialize
+window.addEventListener('load', ()=>{
+  overlay.style.display = 'flex'; 
+  overlay.style.opacity = 1; 
+  typeText(text, message, 17);
+  navBar.style.display = "none"; 
+  sections.forEach(s => s.classList.remove('visible')); 
+  document.body.style.overflow = 'hidden';
+});
+
+// Enter button
+enterBtn.addEventListener('click', () => {
+  overlay.style.transition = 'opacity 0.65s, transform 0.65s cubic-bezier(0.8, 0, 0.2, 1)';
+  overlay.style.transform = 'translate(-50%, -50%) scale(0.93)';
+  overlay.style.opacity = '0';
+  setTimeout(() => {
+    overlay.style.display = 'none'; 
+    document.body.style.overflow = 'auto';
+    navBar.style.display = "block"; 
+    showSection(0);
+    window.scrollTo({top: sections[0].offsetTop - 18, behavior: "smooth"});
+  }, 640);
+});
+
+// Overlay scroll/touch
+overlay.addEventListener('wheel', (e) => { 
+  if (overlay.style.display !== 'none' && e.deltaY > 14) enterBtn.click(); 
+});
+overlay.addEventListener('touchstart', evt => {
+  const startY = evt.touches[0].clientY;
+  function move(ev){ 
+    if (ev.touches[0].clientY < startY - 12) { 
+      enterBtn.click(); 
+      window.removeEventListener('touchmove', move);
+    }
+  }
+  window.addEventListener('touchmove', move);
+  overlay.addEventListener('touchend', () => window.removeEventListener('touchmove', move), {once:true});
+});
+
+// Return to overlay on top scroll
+window.addEventListener('scroll', () => {
+  if(window.scrollY < 10 && overlay.style.display === 'none'){
+    overlay.style.display = 'flex';
+    setTimeout(() => {
+      overlay.style.opacity = 1; 
+      overlay.style.transform = 'translate(-50%, -50%) scale(1)'; 
+    }, 40);
+    setTimeout(() => typeText(text, message, 15), 220); 
+    navBar.style.display = "none";
+    sections.forEach(s => s.classList.remove('visible')); 
+    document.body.style.overflow = 'hidden'; 
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+});
+
+// Navbar
+function setUpNav(){
+  navBar.innerHTML = '';
+  for(let i = 0; i < sections.length; i++){
+    let btn = document.createElement('button');
+    btn.textContent = sections[i].dataset.title || ("Section " + (i + 1));
+    btn.onclick = () => { 
+      showSection(i);
+      setTimeout(() => {
+        window.scrollTo({top: sections[i].offsetTop - 18, behavior: "smooth"});
+      }, 50);
+    }
+    navBar.appendChild(btn);
+  }
+}
+setUpNav();
+
+// Thought bubbles
+document.body.addEventListener('click', evt => {
+  if(evt.target.classList.contains('thought-bubble')){
+    evt.target.classList.toggle('revealed');
+  }
+});
+</script>
+</body>
+</html>
